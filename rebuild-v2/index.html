@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founding cohort · redesign v2</title>
+<link rel="icon" href="https://www.getvantum.com/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --app-bg: #f7f8fa;
+  --app-bg-dark: #030a17;
+  --surface-1: #ffffff;
+  --surface-3: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-soft: #334155;
+  --text-muted: #475569;
+  --text-on-dark: #A3A6B4;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.12);
+  --emerald: #059669;
+  --emerald-hover: #047857;
+  --emerald-light: #d1fae5;
+  --emerald-glow: #6ee7b7;
+  --ochre: #C97B00;
+  --ochre-ink: #8a4f00;
+  --ochre-light: #fff4e0;
+  --terra: #B34A3F;
+  --container: 72rem; /* max-w-6xl */
+  --container-sm: 64rem; /* max-w-5xl */
+  --radius: 1rem;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--app-bg);
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
+.container-sm { max-width: var(--container-sm); margin: 0 auto; padding: 0 1.5rem; }
+.prose-narrow { max-width: 65ch; }
+
+/* Proto chrome */
+.proto-bar {
+  position: sticky; top: 0; z-index: 300;
+  background: #0f172a; color: #fff;
+  font: 650 13px/1.4 var(--sans);
+  padding: 0.65rem 1rem;
+  display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
+  align-items: center; justify-content: space-between;
+}
+.proto-bar a { color: #6ee7b7; text-decoration: none; font-weight: 700; }
+.proto-bar a:hover { text-decoration: underline; }
+
+/* Nav */
+.nav {
+  position: sticky; top: 40px; z-index: 200;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; min-height: 64px;
+}
+.logo img { height: 26px; width: auto; }
+.seats-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.85rem; border-radius: 999px;
+  border: 1.5px solid rgba(201,123,0,0.5);
+  background: var(--ochre-light); color: var(--ochre-ink);
+  font-size: 12px; font-weight: 800; white-space: nowrap;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem; border: 2px solid transparent;
+  font: 750 15px/1 var(--sans); text-decoration: none;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.btn:focus-visible { outline: 2px solid var(--emerald); outline-offset: 3px; }
+.btn-primary { background: var(--emerald); color: #fff; }
+.btn-primary:hover { background: var(--emerald-hover); }
+.btn-secondary {
+  background: #fff; color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+.btn-secondary:hover { border-color: var(--emerald); background: var(--emerald-light); }
+.btn-lg { min-height: 52px; padding: 0.9rem 1.85rem; font-size: 16px; }
+.nav .btn { min-height: 42px; padding: 0.55rem 1.1rem; font-size: 13px; }
+
+/* Motion */
+.reveal {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* Section primitives */
+.section { padding: 6rem 0; }
+.section-alt { background: var(--surface-3); }
+.section-dark { background: var(--app-bg-dark); color: var(--text-on-dark); }
+.section-header { text-align: center; margin: 0 auto 3rem; max-width: 40rem; }
+.eyebrow {
+  font-size: 11px; font-weight: 750; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--emerald); margin-bottom: 0.75rem;
+}
+.section-dark .eyebrow { color: var(--emerald-glow); }
+.section-header h2 {
+  font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+  font-weight: 800; letter-spacing: -0.02em; line-height: 1.2;
+  color: var(--text-primary);
+}
+.section-dark .section-header h2 { color: #fff; }
+.section-header .support {
+  margin: 0.85rem auto 0;
+  max-width: 65ch;
+  font-size: 1.05rem; color: var(--text-muted); font-weight: 500;
+}
+.section-dark .section-header .support { color: var(--text-on-dark); }
+
+/* Hero */
+.hero {
+  padding: 4.5rem 0 3rem;
+  background:
+    radial-gradient(1000px 420px at 50% -10%, rgba(5,150,105,0.07), transparent 60%),
+    linear-gradient(180deg, #fbfcfd 0%, var(--app-bg) 100%);
+  text-align: center;
+}
+.hero-inner { max-width: 46rem; margin: 0 auto; }
+.hero h1 {
+  font-size: clamp(2rem, 4.6vw, 3rem);
+  font-weight: 900; letter-spacing: -0.035em; line-height: 1.12;
+  color: var(--text-primary);
+}
+.hero .sub {
+  margin: 1.25rem auto 0;
+  max-width: 38rem;
+  font-size: 1.125rem; line-height: 1.55;
+  color: var(--text-muted); font-weight: 500;
+}
+
+/* Offer card */
+.offer-card {
+  margin: 2rem auto 0;
+  max-width: 28rem;
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.offer-group { padding: 1.35rem 1.5rem; }
+.offer-label {
+  font-size: 11px; font-weight: 750; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.85rem;
+}
+.offer-list { list-style: none; display: grid; gap: 0.7rem; }
+.offer-list li {
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  font-size: 0.95rem; font-weight: 650; color: var(--text-soft);
+}
+.icon-check {
+  flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px;
+  border-radius: 999px; background: var(--emerald-light); color: var(--emerald);
+  display: grid; place-items: center;
+}
+.icon-check svg { width: 12px; height: 12px; }
+.offer-divider { height: 1px; background: var(--border); }
+.invest-row {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+}
+.invest-price {
+  font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1;
+  color: var(--text-primary);
+}
+.invest-price span { font-size: 0.95rem; font-weight: 650; color: var(--text-muted); }
+.invest-note { font-size: 0.85rem; font-weight: 700; color: var(--emerald); margin-top: 0.35rem; }
+.invest-meta { font-size: 0.8rem; font-weight: 700; color: var(--ochre-ink); text-align: right; }
+
+.hero-cta {
+  margin-top: 1.75rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+}
+.hero-cta .btn-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem;
+}
+.guarantee-line {
+  font-size: 0.9rem; font-weight: 750; color: var(--emerald);
+}
+
+/* Trust strip */
+.trust-strip {
+  padding: 1.25rem 0 2.5rem;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+}
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  max-width: var(--container-sm);
+  margin: 0 auto;
+}
+@media (max-width: 800px) {
+  .trust-grid { grid-template-columns: 1fr 1fr; }
+}
+.trust-item {
+  display: flex; align-items: center; gap: 0.7rem;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 0.9rem; padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.trust-icon {
+  width: 34px; height: 34px; border-radius: 0.65rem;
+  background: var(--surface-3); color: var(--emerald);
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.trust-icon svg { width: 16px; height: 16px; }
+.trust-item strong {
+  display: block; font-size: 0.92rem; font-weight: 800; letter-spacing: -0.01em;
+}
+.trust-item span {
+  display: block; font-size: 0.72rem; font-weight: 650; color: var(--text-muted); margin-top: 0.1rem;
+}
+
+/* Feature cards / who */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+}
+@media (max-width: 800px) { .feature-grid { grid-template-columns: 1fr; } }
+.feature-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 1.1rem; padding: 1.4rem 1.35rem;
+  box-shadow: var(--shadow-sm);
+}
+.feature-card .icon {
+  width: 40px; height: 40px; border-radius: 0.75rem;
+  background: var(--emerald-light); color: var(--emerald);
+  display: grid; place-items: center; margin-bottom: 1rem;
+}
+.feature-card .icon svg { width: 18px; height: 18px; }
+.feature-card h3 {
+  font-size: 1.05rem; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 0.45rem;
+}
+.feature-card p {
+  font-size: 0.92rem; color: var(--text-muted); max-width: 65ch; line-height: 1.5;
+}
+
+/* Quote */
+.quote {
+  max-width: 36rem; margin: 2.5rem auto 0;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 1.1rem; padding: 1.5rem 1.6rem;
+  box-shadow: var(--shadow-sm);
+}
+.quote blockquote {
+  font-size: 1.05rem; font-weight: 650; line-height: 1.45;
+}
+.quote figcaption { margin-top: 0.9rem; font-size: 0.85rem; font-weight: 750; }
+.quote .role { display: block; font-weight: 600; color: var(--text-muted); margin-top: 0.15rem; }
+
+/* Mechanism cards reuse feature-grid */
+.mech .feature-card .icon { background: var(--surface-3); }
+
+/* Stack rows */
+.stack { max-width: 42rem; margin: 0 auto; }
+.stack-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--border);
+}
+.stack-row:first-child { border-top: 1px solid var(--border); }
+.stack-row .name { font-weight: 750; font-size: 0.98rem; }
+.stack-row .meta { font-size: 0.78rem; font-weight: 650; color: var(--text-muted); margin-top: 0.2rem; }
+.stack-row .right { text-align: right; flex-shrink: 0; }
+.slash {
+  display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+  text-decoration: line-through; text-decoration-color: var(--terra); text-decoration-thickness: 2px;
+}
+.worth { font-size: 1.1rem; font-weight: 800; color: var(--ochre-ink); margin-top: 0.15rem; }
+.stack-total {
+  margin-top: 1.1rem; padding: 1.1rem 1.25rem;
+  background: #fff; border: 1px solid var(--border); border-radius: 0.9rem;
+  display: flex; justify-content: space-between; align-items: baseline;
+  box-shadow: var(--shadow-sm);
+}
+.stack-total .label {
+  font-size: 0.72rem; font-weight: 750; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.stack-total .value { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.02em; }
+
+/* Dark investment */
+.value-gap {
+  display: flex; justify-content: center; align-items: center;
+  gap: 1.25rem; flex-wrap: wrap; margin-bottom: 1.75rem;
+}
+.value-gap .label {
+  font-size: 0.72rem; font-weight: 750; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-on-dark);
+}
+.value-gap .amt { font-size: 1.85rem; font-weight: 900; color: #fff; margin-top: 0.2rem; }
+.value-gap .amt.dim {
+  color: var(--text-on-dark);
+  text-decoration: line-through; text-decoration-color: var(--terra);
+}
+.value-gap .arrow { color: var(--emerald-glow); font-weight: 800; font-size: 1.25rem; }
+.price-block {
+  max-width: 24rem; margin: 0 auto; text-align: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 1.15rem; padding: 1.75rem 1.5rem;
+}
+.price-block .was { color: var(--text-on-dark); text-decoration: line-through; font-size: 0.9rem; }
+.price-block .tag {
+  display: inline-block; margin: 0.55rem 0 0.35rem;
+  padding: 0.25rem 0.65rem; border-radius: 999px;
+  background: rgba(110,231,183,0.14); color: var(--emerald-glow);
+  font-size: 0.75rem; font-weight: 750;
+}
+.price-block .now {
+  font-size: 3rem; font-weight: 900; color: #fff; letter-spacing: -0.03em;
+}
+.price-block .now span { font-size: 1.1rem; font-weight: 650; }
+.price-block .sub { margin-top: 0.35rem; font-size: 0.85rem; color: var(--text-on-dark); }
+.price-block .btn { margin-top: 1.15rem; }
+.lifetime {
+  max-width: 36rem; margin: 1.75rem auto 0; text-align: center;
+  font-size: 0.95rem; color: var(--text-on-dark); line-height: 1.5;
+}
+.lifetime strong { color: #fff; }
+
+/* Guarantee */
+.guarantee-box {
+  max-width: 36rem; margin: 0 auto;
+  background: var(--emerald-light);
+  border: 1px solid rgba(5,150,105,0.25);
+  border-radius: 1.1rem; padding: 1.6rem 1.5rem; text-align: center;
+}
+.guarantee-box h3 { color: var(--emerald); font-size: 1.2rem; margin-bottom: 0.5rem; }
+.guarantee-box p { color: var(--text-soft); font-size: 0.95rem; max-width: 65ch; margin: 0 auto; }
+.guarantee-box .refund {
+  display: inline-block; margin-top: 0.85rem;
+  font-size: 1.05rem; font-weight: 800; color: var(--emerald);
+}
+.upside {
+  max-width: 32rem; margin: 2.5rem auto 0; text-align: center;
+}
+.upside h3 { font-size: 1.25rem; font-weight: 800; margin: 0.4rem 0 0.75rem; }
+.upside .eq { font-weight: 700; color: var(--text-soft); }
+.upside .result {
+  display: block; margin-top: 0.4rem;
+  font-size: 2.25rem; font-weight: 900; color: var(--ochre-ink);
+}
+.upside .disc {
+  margin-top: 0.85rem; font-size: 0.9rem; color: var(--text-muted); max-width: 65ch; margin-left: auto; margin-right: auto;
+}
+.center { text-align: center; margin-top: 1.75rem; }
+
+/* Pact */
+.why-box {
+  max-width: 40rem; margin: 0 auto 1.5rem;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 1.1rem; padding: 1.4rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.why-box h3 { font-size: 1.05rem; margin-bottom: 0.45rem; }
+.why-box p { font-size: 0.95rem; color: var(--text-muted); max-width: 65ch; }
+.pact { max-width: 40rem; margin: 0 auto; display: grid; gap: 0.65rem; }
+.pact-item {
+  display: flex; gap: 0.75rem; align-items: flex-start;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 0.85rem; padding: 0.9rem 1rem;
+  font-size: 0.92rem; font-weight: 650; color: var(--text-soft);
+}
+.pact-item .check { color: var(--emerald); font-weight: 900; }
+
+.final {
+  padding: 4.5rem 0 5rem; text-align: center; background: var(--surface-3);
+}
+.final .seats-line {
+  margin-top: 0.85rem; font-size: 0.85rem; font-weight: 750; color: var(--ochre-ink);
+}
+.final .sub {
+  margin: 0.75rem auto 0; max-width: 36ch;
+  font-size: 0.9rem; color: var(--text-muted);
+}
+footer {
+  padding: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--emerald); font-weight: 650; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <span>Redesign v2 · scanability + conversion · not live</span>
+  <span>
+    <a href="../rebuild/">v1 rebuild</a> ·
+    <a href="../live.html">live snapshot</a> ·
+    <a href="https://www.getvantum.com/founding-cohort/">production</a>
+  </span>
+</div>
+
+<header class="nav">
+  <div class="container">
+    <a class="logo" href="https://www.getvantum.com/" aria-label="Vantum home">
+      <img src="https://www.getvantum.com/assets/brand/Vantum-Wordmark-Black.png" alt="Vantum" width="140" height="28">
+    </a>
+    <span class="seats-pill" role="status">9 founding seats left</span>
+    <a class="btn btn-primary" href="#apply">Get early access</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner reveal">
+      <p class="eyebrow">Founding Operator Program</p>
+      <h1>You know exactly what you should be working on this week.<br>You also know you won't get to it.</h1>
+      <p class="sub">
+        Build your own business while you keep delivering for clients.
+        Over twelve weeks, Vantum helps protect time for growth, adapt when priorities change, and move your business forward every week.
+      </p>
+
+      <div class="offer-card" aria-label="Offer summary">
+        <div class="offer-group">
+          <p class="offer-label">What you get</p>
+          <ul class="offer-list">
+            <li>
+              <span class="icon-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+              12 weeks of Vantum
+            </li>
+            <li>
+              <span class="icon-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+              Weekly founder sessions
+            </li>
+            <li>
+              <span class="icon-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+              Client acquisition playbooks
+            </li>
+            <li>
+              <span class="icon-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+              Product shaped by your feedback
+            </li>
+          </ul>
+        </div>
+        <div class="offer-divider"></div>
+        <div class="offer-group">
+          <p class="offer-label">Investment</p>
+          <div class="invest-row">
+            <div>
+              <div class="invest-price">$100<span>/month</span></div>
+              <div class="invest-note">50% lifetime founding discount</div>
+            </div>
+            <div class="invest-meta">Only 10 founding<br>operators</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-cta" id="apply">
+        <div class="btn-row">
+          <a class="btn btn-primary btn-lg" href="https://www.getvantum.com/founding-cohort/">Get early access</a>
+          <a class="btn btn-secondary btn-lg" href="#stack">See what's included</a>
+        </div>
+        <p class="guarantee-line">No new client in twelve weeks. Full refund.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust-strip" aria-label="Credibility">
+  <div class="container">
+    <div class="trust-grid reveal">
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4z"/><path d="M8 21h8"/></svg></span>
+        <div><strong>152 interviews</strong><span>Operators like you</span></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <div><strong>40+ years</strong><span>Building businesses</span></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="3"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
+        <div><strong>9 founding seats</strong><span>Left in this cohort</span></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <div><strong>Money-back</strong><span>If no new client</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="section section-alt" id="fit">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow">Who this is for</p>
+      <h2>Built for solo fractionals already carrying real client load.</h2>
+      <p class="support">If client work fills the week and your own pipeline keeps losing, this seat is for you.</p>
+    </div>
+    <div class="feature-grid reveal">
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="3"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3>Already serving 2+ clients</h3>
+        <p>You run at least two engagements as a solo. Delivery is not the open question.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <h3>Client work fills your calendar</h3>
+        <p>Outbound for your business keeps losing the fight for the same hours.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
+        <h3>Ready for one more client</h3>
+        <p>You can take on another client within twelve weeks if the week stops collapsing.</p>
+      </article>
+    </div>
+    <figure class="quote reveal">
+      <blockquote>"I'm having a hard time getting out of my own way, doing for me what I do for others."</blockquote>
+      <figcaption>Reese Coleman<span class="role">Fractional CMO · 5 client engagements</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- MECHANISM -->
+<section class="section mech">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow">How the twelve weeks work</p>
+      <h2>Decide. Defend. Deliver.</h2>
+      <p class="support">You already run this for clients. Now it runs for your own business.</p>
+    </div>
+    <div class="feature-grid reveal">
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></div>
+        <h3>Decide</h3>
+        <p>What matters gets picked before the inbox does. Not forty options at 7 a.m.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Defend</h3>
+        <p>Client fires still happen. Growth time does not disappear with them.</p>
+      </article>
+      <article class="feature-card">
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <h3>Deliver</h3>
+        <p>Drafts, outreach, and deliverables so the hour becomes output, not another list.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="section section-alt" id="stack">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow" style="color:var(--ochre-ink)">What's included</p>
+      <h2>Everything in the founding program.</h2>
+      <p class="support">Four pieces. Outside and list rates first. Founding rate next.</p>
+    </div>
+    <div class="stack reveal">
+      <div class="stack-row">
+        <div>
+          <div class="name">Founder implementation</div>
+          <div class="meta">12 weeks · Tabarak &amp; Brian</div>
+        </div>
+        <div class="right"><span class="slash">$3,000</span><div class="worth">$3,000</div></div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="name">Product and workflow design</div>
+          <div class="meta">Fitted to your client load</div>
+        </div>
+        <div class="right"><span class="slash">$4,000+</span><div class="worth">$4,000+</div></div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="name">Three months of Vantum</div>
+          <div class="meta">List $200/mo</div>
+        </div>
+        <div class="right"><span class="slash">$600</span><div class="worth">$600</div></div>
+      </div>
+      <div class="stack-row">
+        <div>
+          <div class="name">50% off for life</div>
+          <div class="meta">Year-one list delta</div>
+        </div>
+        <div class="right"><span class="slash">$1,200</span><div class="worth">$1,200</div></div>
+      </div>
+      <div class="stack-total">
+        <span class="label">Total stacked value</span>
+        <span class="value">$8,800+</span>
+      </div>
+    </div>
+    <div class="center reveal" style="margin-top:2rem">
+      <a class="btn btn-primary btn-lg" href="#apply">Get early access</a>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTMENT -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow">Your investment</p>
+      <h2>$8,800+ stacked. You pay $100/mo.</h2>
+      <p class="support">Half public list. Locked for founding members.</p>
+    </div>
+    <div class="value-gap reveal">
+      <div>
+        <div class="label">Stacked at list</div>
+        <div class="amt dim">$8,800+</div>
+      </div>
+      <div class="arrow">→</div>
+      <div>
+        <div class="label">Founding rate</div>
+        <div class="amt">$100/mo</div>
+      </div>
+    </div>
+    <div class="price-block reveal">
+      <div class="was">$200/mo list</div>
+      <div class="tag">50% off for life</div>
+      <div class="now">$100<span>/mo</span></div>
+      <div class="sub">12 weeks · billed monthly · cancel anytime</div>
+      <a class="btn btn-primary btn-lg" href="#apply">Get early access</a>
+    </div>
+    <p class="lifetime reveal"><strong>$100/mo does not expire with the cohort.</strong> Founding members keep the rate. Everyone after pays list.</p>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow">If it does not produce</p>
+      <h2>No new client. Full refund.</h2>
+      <p class="support">Finish the twelve weeks. Use Vantum. Still no new client: every payment back.</p>
+    </div>
+    <div class="guarantee-box reveal">
+      <h3>Show up. Use it. Still stuck?</h3>
+      <p>Attend the calls. Run priorities through Vantum each week. No new client by the end means a full refund.</p>
+      <span class="refund">Every payment back, in full</span>
+    </div>
+    <div class="upside reveal">
+      <p class="eyebrow" style="text-align:center">What one client changes</p>
+      <h3>One mid-market retainer covers years of this rate</h3>
+      <p class="eq">$5,000/mo × 6 months<span class="result">$30,000</span></p>
+      <p class="disc">$30K against $1,200 of founding-rate spend in year one. Your numbers vary. The shape does not.</p>
+    </div>
+    <div class="center reveal">
+      <a class="btn btn-primary btn-lg" href="#apply">Get early access</a>
+    </div>
+  </div>
+</section>
+
+<!-- AGREEMENT -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="eyebrow">Working agreement</p>
+      <h2>Ten seats. Real work.</h2>
+      <p class="support">The cap exists so founder time stays direct.</p>
+    </div>
+    <div class="why-box reveal">
+      <h3>Why only 10</h3>
+      <p>Past ten seats, weekly founder access is the first thing that breaks. The limit is capacity math, applied to us.</p>
+    </div>
+    <div class="pact reveal">
+      <div class="pact-item"><span class="check">✓</span><span>You can take on one new client in twelve weeks if the week holds</span></div>
+      <div class="pact-item"><span class="check">✓</span><span>You show up weekly and use Vantum between sessions</span></div>
+      <div class="pact-item"><span class="check">✓</span><span>You follow through on ranked priorities</span></div>
+      <div class="pact-item"><span class="check">✓</span><span>You give direct product feedback</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="container reveal">
+    <a class="btn btn-primary btn-lg" href="#apply">Get early access</a>
+    <p class="seats-line">Closes when the tenth seat fills, not on a calendar.</p>
+    <p class="sub">$100/mo. 50% off for life. Full refund if no new client.</p>
+  </div>
+</section>
+
+<footer>
+  Redesign v2 prototype ·
+  <a href="../">Hub</a> ·
+  <a href="https://www.getvantum.com/">Vantum</a>
+</footer>
+
+<script>
+(function () {
+  var nodes = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window)) {
+    nodes.forEach(function (n) { n.classList.add("in"); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("in");
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+  nodes.forEach(function (n) { io.observe(n); });
+})();
+</script>
+</body>
+</html>
